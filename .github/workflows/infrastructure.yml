@@ -18,7 +18,8 @@ jobs:
       - shell: bash
         name: Deploy Azure infrastructure
         run: |
-          sh "bash ./src/deploy.sh \
+          chmod +x "${GITHUB_WORKSPACE}/src/deploy.sh"
+          ${GITHUB_WORKSPACE}/src/deploy.sh \
             -r ${{ secrets.resource_group }} \
             -s ${{ secrets.storage_account }} \
             -c ${{ secrets.container_name }} \
@@ -26,4 +27,4 @@ jobs:
             -l ${{ secrets.location }} \
             -e dev \
             -t ${{ secrets.tenant_id }} \
-            -u ${{ secrets.subscription_id }}"
+            -u ${{ secrets.subscription_id }}
