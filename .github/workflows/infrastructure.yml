@@ -20,6 +20,7 @@ jobs:
         with:
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          allow-no-subscriptions: true
       
       - shell: bash
         name: Deploy Azure infrastructure
