@@ -18,7 +18,8 @@ jobs:
       - shell: bash
         name: Deploy Azure infrastructure
         run: |
-          git update-index --chmod=+x ./src/deploy.sh \
+          git update-index --chmod=+x ./src/deploy.sh && \
+          cd ./src && ./deploy.sh \
             -r ${{ secrets.resource_group }} \
             -s ${{ secrets.storage_account }} \
             -c ${{ secrets.container_name }} \
