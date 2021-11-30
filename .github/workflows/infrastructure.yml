@@ -1,0 +1,29 @@
+name: Infrastructure
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+  create:
+    name: Deploy dev environment
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v2
+      
+      - shell: bash
+        name: Deploy Azure infrastructure
+        run: |
+          cd src && ./deploy.sh \
+            -r ${{ secrets.resource_group }} \
+            -s ${{ secrets.storage_account }} \
+            -c ${{ secrets.container_name }} \
+            -k ${{ secrets.tf_state_key }} \
+            -l ${{ secrets.location }} \
+            -e ${{ secrets.environment }} \
+            -t ${{ secrets.tenant_id }} \
+            -u ${{ secrets.subscription_id }}
