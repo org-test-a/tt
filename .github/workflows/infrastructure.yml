@@ -15,16 +15,22 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+      
       - shell: bash
         name: Deploy Azure infrastructure
         run: |
           chmod +x "${GITHUB_WORKSPACE}/src/deploy.sh"
           ${GITHUB_WORKSPACE}/src/deploy.sh \
-            -r ${{ secrets.resource_group }} \
-            -s ${{ secrets.storage_account }} \
-            -c ${{ secrets.container_name }} \
-            -k ${{ secrets.tf_state_key }} \
-            -l ${{ secrets.location }} \
+            -r ${{ secrets.RESOURCE_GROUP }} \
+            -s ${{ secrets.STORAGE_ACCOUNT }} \
+            -c ${{ secrets.CONTAINER_NAME }} \
+            -k ${{ secrets.TF_STATE_KEY }} \
+            -l ${{ secrets.LOCATION }} \
             -e dev \
-            -t ${{ secrets.tenant_id }} \
-            -u ${{ secrets.subscription_id }}
+            -t ${{ secrets.TENANT_ID }} \
+            -u ${{ secrets.SUBSCRIPTION_ID }}
