@@ -63,7 +63,7 @@ terraform init \
     -backend-config="container_name=$CONTAINER_NAME" \
     -backend-config="key=$KEY"
 terraform plan \
-  -var-file=terraform-$ENVIRONMENT_NAME-values.json \
+  -var-file=terraform-$ENVIRONMENT_NAME-auto.tfvars \
   -input=false \
   -out=tfplan #TODO add json file to github action secrets with params
 terraform apply tfplan -auto-approve
