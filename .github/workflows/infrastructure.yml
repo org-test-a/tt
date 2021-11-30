@@ -8,9 +8,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  create:
-    name: Deploy dev environment
-    runs-on: ubuntu-latest
+  deploy_dev:
+    name: Deploy dev infrastructure environment
+    runs-on: ubuntu-20.04
     environment: dev
     steps:
       - uses: actions/checkout@v2
@@ -18,8 +18,7 @@ jobs:
       - shell: bash
         name: Deploy Azure infrastructure
         run: |
-          git update-index --chmod=+x ./src/deploy.sh && \
-          cd ./src && ./deploy.sh \
+          sh "bash ./src/deploy.sh \
             -r ${{ secrets.resource_group }} \
             -s ${{ secrets.storage_account }} \
             -c ${{ secrets.container_name }} \
@@ -27,4 +26,4 @@ jobs:
             -l ${{ secrets.location }} \
             -e dev \
             -t ${{ secrets.tenant_id }} \
-            -u ${{ secrets.subscription_id }}
+            -u ${{ secrets.subscription_id }}"
