@@ -4,13 +4,13 @@ set -e
 USAGE="$(basename "$0") [-h] [-r RESOURCE_GROUP] [-s STORAGE_ACCOUNT_NAME] [-c CONTAINER_NAME] [-k KEY] [-l LOCATION] [-e ENVIRONMENT_NAME] [-t ARM_TENANT_ID] [-u ARM_SUBSCRIPTION_ID]
 Create infrastructure for Azure using Terraform
 where:
-    -h   show this help text
-    -r   resource group name
-    -s   storage account name
-    -c   storage account container name
-    -k   terraform backend key state
-    -l   location resources
-    -e   environment name
+    -h  show this help text
+    -r  resource group name
+    -s  storage account name
+    -c  storage account container name
+    -k  terraform backend key state
+    -l  location resources
+    -e  environment name
     -t  tenant id
     -u  subscription id"
 
@@ -63,7 +63,7 @@ terraform init \
     -backend-config="container_name=$CONTAINER_NAME" \
     -backend-config="key=$KEY"
 terraform plan \
-  -var-file=terraform-$ENVIRONMENT_NAME-auto.tfvars \
+  -var-file=tfvars_$ENVIRONMENT_NAME \
   -input=false \
   -out=tfplan #TODO add json file to github action secrets with params
 terraform apply tfplan -auto-approve
