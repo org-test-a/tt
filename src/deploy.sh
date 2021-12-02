@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-USAGE="$(basename "$0") [-h] [-r RESOURCE_GROUP] [-s STORAGE_ACCOUNT_NAME] [-c CONTAINER_NAME] [-k KEY] [-l LOCATION] [-e ENVIRONMENT_NAME] [-t ARM_TENANT_ID] [-u ARM_SUBSCRIPTION_ID]
+USAGE="$(basename "$0") [-h] [-r RESOURCE_GROUP] [-s STORAGE_ACCOUNT_NAME] [-c CONTAINER_NAME] [-k KEY] [-l LOCATION] [-e ENVIRONMENT_NAME]
 Create infrastructure for Azure using Terraform
 where:
     -h  show this help text
@@ -10,11 +10,9 @@ where:
     -c  storage account container name
     -k  terraform backend key state
     -l  location resources
-    -e  environment name
-    -t  tenant id
-    -u  subscription id"
+    -e  environment name"
 
-OPTIONS=':r:s:c:k:l:e:t:u:'
+OPTIONS=':r:s:c:k:l:e:'
 while getopts $OPTIONS option; do
   case "$option" in
     h) echo "$USAGE"; exit;;
@@ -24,23 +22,15 @@ while getopts $OPTIONS option; do
     k) KEY=$OPTARG;;
     l) LOCATION=$OPTARG;;
     e) ENVIRONMENT_NAME=$OPTARG;;
-    t) ARM_TENANT_ID=$OPTARG;;
-    u) ARM_SUBSCRIPTION_ID=$OPTARG;;
     :) printf "missing argument for -%s\n" "$OPTARG" >&2; echo "$USAGE" >&2; exit 1;;
    \?) printf "illegal option: -%s\n" "$OPTARG" >&2; echo "$USAGE" >&2; exit 1;;
   esac
 done
 
 # Check mandatory arguments
-if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAINER_NAME" ] || [ ! "$KEY" ]  || [ ! "$LOCATION" ] || [ ! "$ENVIRONMENT_NAME" ] || [ ! "$ARM_TENANT_ID" ] || [ ! "$ARM_SUBSCRIPTION_ID" ]; then
+if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAINER_NAME" ] || [ ! "$KEY" ]  || [ ! "$LOCATION" ] || [ ! "$ENVIRONMENT_NAME" ]; then
   echo "$USAGE" >&2; exit 1
 fi
-
-# Login Azure
-az login -t $ARM_TENANT_ID -o none
-
-# Change subscription
-az account set --subscription $ARM_SUBSCRIPTION_ID -o none
 
 # Create Resource Group
 az group create -l $LOCATION -n $RESOURCE_GROUP_NAME -o none
@@ -65,6 +55,6 @@ terraform init \
 terraform plan \
   -var-file=tfvars_$ENVIRONMENT_NAME \
   -input=false \
-  -out=tfplan #TODO add json file to github action secrets with params
+  -out=tfplan
 terraform apply tfplan -auto-approve
 popd
