@@ -32,6 +32,4 @@ jobs:
             -c ${{ secrets.CONTAINER_NAME }} \
             -k ${{ secrets.TF_STATE_KEY }} \
             -l ${{ secrets.LOCATION }} \
-            -e dev \
-            -t ${{ secrets.TENANT_ID }} \
-            -u ${{ secrets.SUBSCRIPTION_ID }}
+            -e dev
