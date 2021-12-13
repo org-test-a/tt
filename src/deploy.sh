@@ -54,7 +54,7 @@ terraform init \
     -backend-config="key=$KEY"
 
 # Extract tfvars file from secrets by environment
-echo $SECRET | base64 -d > tfvars_$ENVIRONMENT_NAME
+echo $TFVARS | base64 -d > tfvars_$ENVIRONMENT_NAME
 
 terraform plan \
   -var-file=tfvars_$ENVIRONMENT_NAME \
