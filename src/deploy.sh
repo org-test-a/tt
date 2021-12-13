@@ -32,7 +32,7 @@ if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAI
   echo "$USAGE" >&2; exit 1
 fi
 
-echo ${{ secrets[format('tfvars_{0}', $ENVIRONMENT_NAME)] }}
+echo ${{ secrets[format('tfvars_{0}', env.ENVIRONMENT_NAME)] }}
 
 # Create Resource Group if not exist
 #az group list -o tsv | grep $RESOURCE_GROUP_NAME -q || az group create -l $LOCATION -n $RESOURCE_GROUP_NAME -o none
