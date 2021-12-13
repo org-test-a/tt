@@ -8,12 +8,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy_dev:
-    name: Deploy dev infrastructure environment
-    runs-on: ubuntu-20.04
-    environment: dev
+  deploy:
+    name: Deploy infrastructure environment
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04]
+        env: [dev, pre, pro]
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
       
       #- name: 'Az CLI login'
       #  uses: azure/login@v1
@@ -22,8 +26,10 @@ jobs:
       #    subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
       #    allow-no-subscriptions: true
       
-      - shell: bash
-        name: Deploy Azure infrastructure
+      - name: Deploy ${{ matrix.env }} environment
+        shell: bash
+        env:
+          SECRET: ${{ secrets[format('tfvars_{0}', matrix.env)] }}
         run: |
           chmod +x "${GITHUB_WORKSPACE}/src/deploy.sh"
           ${GITHUB_WORKSPACE}/src/deploy.sh \
@@ -32,4 +38,4 @@ jobs:
             -c ${{ secrets.CONTAINER_NAME }} \
             -k ${{ secrets.TF_STATE_KEY }} \
             -l ${{ secrets.LOCATION }} \
-            -e dev
+            -e ${{ matrix.env }}
