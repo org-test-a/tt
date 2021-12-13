@@ -32,7 +32,9 @@ if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAI
   echo "$USAGE" >&2; exit 1
 fi
 
-echo $SECRET
+echo $SECRET | base64 -d > tfvars_$ENVIRONMENT_NAME
+
+cat tfvars_$ENVIRONMENT_NAME
 
 # Create Resource Group if not exist
 #az group list -o tsv | grep $RESOURCE_GROUP_NAME -q || az group create -l $LOCATION -n $RESOURCE_GROUP_NAME -o none
