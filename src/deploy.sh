@@ -31,7 +31,7 @@ done
 if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAINER_NAME" ] || [ ! "$KEY" ]  || [ ! "$LOCATION" ] || [ ! "$ENVIRONMENT_NAME" ]; then
   echo "$USAGE" >&2; exit 1
 fi
-printenv
+
 echo $SECRET
 
 # Create Resource Group if not exist

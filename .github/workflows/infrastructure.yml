@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04]
-        env: [dev, pre, pro]
+        env: [dev]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
