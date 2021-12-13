@@ -32,7 +32,7 @@ if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAI
   echo "$USAGE" >&2; exit 1
 fi
 printenv
-echo env.SECRET
+echo $SECRET
 
 # Create Resource Group if not exist
 #az group list -o tsv | grep $RESOURCE_GROUP_NAME -q || az group create -l $LOCATION -n $RESOURCE_GROUP_NAME -o none
@@ -56,7 +56,7 @@ echo env.SECRET
 #    -backend-config="key=$KEY"
 #
 ## Extract tfvars file from secrets by environment
-#echo ${{ secrets[format('tfvars_{0}', $ENVIRONMENT_NAME)] }} | base64 -d > tfvars_$ENVIRONMENT_NAME
+#echo $SECRET | base64 -d > tfvars_$ENVIRONMENT_NAME
 #
 #terraform plan \
 #  -var-file=tfvars_$ENVIRONMENT_NAME \
