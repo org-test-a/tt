@@ -12,7 +12,7 @@ where:
     -l  location resources
     -e  environment name"
 
-OPTIONS=':r:s:c:k:l:e:t:u:'
+OPTIONS=':r:s:c:k:l:e:'
 while getopts $OPTIONS option; do
   case "$option" in
     h) echo "$USAGE"; exit;;
