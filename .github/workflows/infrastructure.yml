@@ -24,8 +24,6 @@ jobs:
       
       - shell: bash
         name: Deploy Azure infrastructure
-        env:
-          ENVIRONMENT_NAME: dev
         run: |
           chmod +x "${GITHUB_WORKSPACE}/src/deploy.sh"
           ${GITHUB_WORKSPACE}/src/deploy.sh \
@@ -34,4 +32,4 @@ jobs:
             -c ${{ secrets.CONTAINER_NAME }} \
             -k ${{ secrets.TF_STATE_KEY }} \
             -l ${{ secrets.LOCATION }} \
-            -e env.ENVIRONMENT_NAME
+            -e dev
