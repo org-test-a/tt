@@ -28,8 +28,6 @@ jobs:
       
       - name: Deploy ${{ matrix.env }} environment
         shell: bash
-        env:
-          SECRET: ${{ secrets[format('tfvars_{0}', $matrix.env)] }}
         run: |
           chmod +x "${GITHUB_WORKSPACE}/src/deploy.sh"
           ${GITHUB_WORKSPACE}/src/deploy.sh \
