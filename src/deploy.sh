@@ -32,38 +32,34 @@ if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAI
   echo "$USAGE" >&2; exit 1
 fi
 
+# Create Resource Group if not exist
+az group list -o tsv | grep $RESOURCE_GROUP_NAME -q || az group create -l $LOCATION -n $RESOURCE_GROUP_NAME -o none
+
+# Create Storage Account if not exist
+az storage account list -g $RESOURCE_GROUP_NAME -o tsv | grep $STORAGE_ACCOUNT_NAME -q || az storage account create -n $STORAGE_ACCOUNT_NAME -g $RESOURCE_GROUP_NAME -l $LOCATION -o none
+
+# Create Storage Account blob if not exist
+az storage container exists --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME -o tsv | grep True -q || az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME -o none
+
+# Create/Select Terraform workspace
+WORKSPACE="edeka_$ENVIRONMENT_NAME"
+terraform workspace select $WORKSPACE || terraform workspace new $WORKSPACE
+
+pushd deployment
+# Initialize deployment
+terraform init \
+    -backend-config="resource_group_name=$RESOURCE_GROUP_NAME" \
+    -backend-config="storage_account_name=$STORAGE_ACCOUNT_NAME" \
+    -backend-config="container_name=$CONTAINER_NAME" \
+    -backend-config="key=$KEY"
+
+# Extract tfvars file from secrets by environment
 echo $SECRET | base64 -d > tfvars_$ENVIRONMENT_NAME
 
-cat tfvars_$ENVIRONMENT_NAME
+terraform plan \
+  -var-file=tfvars_$ENVIRONMENT_NAME \
+  -input=false \
+  -out=tfplan_$ENVIRONMENT_NAME
 
-# Create Resource Group if not exist
-#az group list -o tsv | grep $RESOURCE_GROUP_NAME -q || az group create -l $LOCATION -n $RESOURCE_GROUP_NAME -o none
-#
-## Create Storage Account if not exist
-#az storage account list -g $RESOURCE_GROUP_NAME -o tsv | grep $STORAGE_ACCOUNT_NAME -q || az storage account create -n $STORAGE_ACCOUNT_NAME -g $RESOURCE_GROUP_NAME -l $LOCATION -o none
-#
-## Create Storage Account blob if not exist
-#az storage container exists --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME -o tsv | grep True -q || az storage container create --name $CONTAINER_NAME --account-name $STORAGE_ACCOUNT_NAME -o none
-#
-## Create/Select Terraform workspace
-#WORKSPACE="edeka_$ENVIRONMENT_NAME"
-#terraform workspace select $WORKSPACE || terraform workspace new $WORKSPACE
-#
-#pushd deployment
-## Initialize deployment
-#terraform init \
-#    -backend-config="resource_group_name=$RESOURCE_GROUP_NAME" \
-#    -backend-config="storage_account_name=$STORAGE_ACCOUNT_NAME" \
-#    -backend-config="container_name=$CONTAINER_NAME" \
-#    -backend-config="key=$KEY"
-#
-## Extract tfvars file from secrets by environment
-#echo $SECRET | base64 -d > tfvars_$ENVIRONMENT_NAME
-#
-#terraform plan \
-#  -var-file=tfvars_$ENVIRONMENT_NAME \
-#  -input=false \
-#  -out=tfplan_$ENVIRONMENT_NAME
-#
-#terraform apply tfplan_$ENVIRONMENT_NAME -auto-approve
-#popd
+terraform apply tfplan_$ENVIRONMENT_NAME -auto-approve
+popd

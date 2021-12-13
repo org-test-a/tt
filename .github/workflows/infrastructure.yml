@@ -15,17 +15,17 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04]
-        env: [dev]
+        env: [dev, pre, pro]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       
-      #- name: 'Az CLI login'
-      #  uses: azure/login@v1
-      #  with:
-      #    tenant-id: ${{ secrets.TENANT_ID }}
-      #    subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
-      #    allow-no-subscriptions: true
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          tenant-id: ${{ secrets.TENANT_ID }}
+          subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
+          allow-no-subscriptions: true
       
       - name: Deploy ${{ matrix.env }} environment
         shell: bash
