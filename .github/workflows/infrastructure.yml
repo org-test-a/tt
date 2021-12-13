@@ -11,6 +11,7 @@ jobs:
   deploy:
     name: Deploy infrastructure environment
     runs-on: ${{ matrix.os }}
+    environment: ${{ matrix.env }}
     strategy:
       matrix:
         os: [ubuntu-20.04]
