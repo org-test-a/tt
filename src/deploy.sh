@@ -32,7 +32,7 @@ if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAI
   echo "$USAGE" >&2; exit 1
 fi
 
-T=format('tfvars_{0}', $ENVIRONMENT_NAME)
+T=tfvars_$ENVIRONMENT_NAME
 echo $T
 echo ${{ secrets[env.T] }}
 
