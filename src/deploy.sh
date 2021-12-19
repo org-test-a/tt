@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-USAGE="$(basename "$0") [-h] [-r RESOURCE_GROUP] [-s STORAGE_ACCOUNT_NAME] [-c CONTAINER_NAME] [-k KEY] [-l LOCATION] [-e ENVIRONMENT_NAME]
+USAGE="$(basename "$0") [-h] [-r RESOURCE_GROUP] [-s STORAGE_ACCOUNT_NAME] [-c CONTAINER_NAME] [-k KEY] [-l LOCATION] [-e ENVIRONMENT_NAME] [-u CLIENT_ID]
 Create infrastructure for Azure using Terraform
 where:
     -h  show this help text
@@ -10,9 +10,10 @@ where:
     -c  storage account container name
     -k  terraform backend key state
     -l  location resources
+    -u  ami client id
     -e  environment name"
 
-OPTIONS=':r:s:c:k:l:e:'
+OPTIONS=':r:s:c:k:l:e:u:'
 while getopts $OPTIONS option; do
   case "$option" in
     h) echo "$USAGE"; exit;;
@@ -21,6 +22,7 @@ while getopts $OPTIONS option; do
     c) CONTAINER_NAME=$OPTARG;;
     k) KEY=$OPTARG;;
     l) LOCATION=$OPTARG;;
+    u) CLIENT_ID=$OPTARG;;
     e) ENVIRONMENT_NAME=$OPTARG;;
     :) printf "missing argument for -%s\n" "$OPTARG" >&2; echo "$USAGE" >&2; exit 1;;
    \?) printf "illegal option: -%s\n" "$OPTARG" >&2; echo "$USAGE" >&2; exit 1;;
@@ -28,9 +30,11 @@ while getopts $OPTIONS option; do
 done
 
 # Check mandatory arguments
-if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAINER_NAME" ] || [ ! "$KEY" ]  || [ ! "$LOCATION" ] || [ ! "$ENVIRONMENT_NAME" ]; then
+if [ ! "$RESOURCE_GROUP_NAME" ] || [ ! "$STORAGE_ACCOUNT_NAME" ] || [ ! "$CONTAINER_NAME" ] || [ ! "$KEY" ]  || [ ! "$LOCATION" ] || [ ! "$ENVIRONMENT_NAME" ] || [ ! "$CLIENT_ID" ]; then
   echo "$USAGE" >&2; exit 1
 fi
+
+az login --identity --username $CLIENT_ID
 
 # Create Resource Group if not exist
 az group list -o tsv | grep $RESOURCE_GROUP_NAME -q || az group create -l $LOCATION -n $RESOURCE_GROUP_NAME -o none
