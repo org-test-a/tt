@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04]
-        env: [DEV, PRE, PRO]
+        env: [dev, pre, pro]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -37,4 +37,5 @@ jobs:
             -c ${{ secrets.CONTAINER_NAME }} \
             -k ${{ secrets.TF_STATE_KEY }} \
             -l ${{ secrets.LOCATION }} \
+            -u ${{ secrets.CLIENT_ID }} \
             -e ${{ matrix.env }}
